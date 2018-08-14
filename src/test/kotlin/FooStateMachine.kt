@@ -4,7 +4,7 @@ import org.mechdancer.statemachine.legacy.waiter.Timer
 import org.mechdancer.statemachine.legacy.waiter.Waiter
 import java.util.concurrent.TimeUnit
 
-class FooRunner : IStateMachine {
+class FooStateMachine : IStateMachine {
 
 	private val condition = Condition(false)
 	private val timer = Timer(3000, TimeUnit.MILLISECONDS)
