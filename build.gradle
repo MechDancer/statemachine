@@ -1,7 +1,20 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.8.1'
+        classpath 'org.jetbrains.dokka:dokka-gradle-plugin:0.9.17'
+    }
+}
+
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.2.60'
-    id 'org.jetbrains.dokka' version "0.9.17"
 }
+
+apply plugin: 'org.jetbrains.dokka'
+apply plugin: 'com.novoda.bintray-release'
 
 group 'org.mechdancer'
 version '0.1.0-SNAPSHOT'
@@ -25,4 +38,18 @@ kotlin {
     experimental {
         coroutines "enable"
     }
+}
+
+publish {
+    userOrg = 'mechdancer'
+    groupId = 'org.mechdancer'
+    artifactId = 'statemachine'
+    publishVersion = '0.1.0'
+    desc = 'statemachine kotlin framework'
+    website = 'https://github.com/MechDancer/statemachine'
+}
+
+dokka{
+    outputFormat = 'html'
+    outputDirectory = "$buildDir/javadoc"
 }
