@@ -2,7 +2,7 @@ package org.mechdancer.statemachine.legacy.waiter
 
 abstract class Waiter {
 	internal var isWaiting: Boolean = false
-	protected var isRunning: Boolean = false
+	private var isRunning: Boolean = false
 	protected var finished: Boolean = false
 
 	internal fun refresh() {
@@ -18,4 +18,7 @@ abstract class Waiter {
 		isRunning = true
 	}
 
+	fun teardown() {
+		isRunning = false
+	}
 }

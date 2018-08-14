@@ -7,5 +7,6 @@ class Condition(private var boolean: Boolean) : Waiter() {
 
 	fun reset(condition: Boolean) {
 		boolean = condition
+		teardown()
 	}
 }

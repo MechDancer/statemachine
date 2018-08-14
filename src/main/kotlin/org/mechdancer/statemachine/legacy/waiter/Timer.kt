@@ -14,6 +14,6 @@ class Timer(delay: Long, timeUnit: TimeUnit) : Waiter() {
 	fun reset(delay: Long, timeUnit: TimeUnit) {
 		target = System.currentTimeMillis() +
 				TimeUnit.MILLISECONDS.convert(delay, timeUnit)
-		isRunning = false
+		teardown()
 	}
 }
