@@ -1,5 +1,7 @@
 # 状态机的 kotlin 实现
 
+[![Build Status](https://www.travis-ci.org/MechDancer/statemachine.svg?branch=master)](https://www.travis-ci.org/MechDancer/statemachine)
+
 此项目起源于 FTC 自动程序，用于将大循环式的机器人软件结构变换为顺序的形式，同时实现更多基于状态机模型的逻辑形式。项目的目的是为多种状态机模型提供 kotlin 下统一、友好的语法。
 
 项目采用将从 FTC 的遗产开始，逐步优化并添加功能。

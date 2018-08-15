@@ -29,7 +29,7 @@ class FooStateMachine : SwitchableStateMachine() {
 				println("condition start!")
 			}
 			3 -> {
-				println("loop 2")
+				println("action 2")
 				Condition.reset(true)
 			}
 			4 -> {
