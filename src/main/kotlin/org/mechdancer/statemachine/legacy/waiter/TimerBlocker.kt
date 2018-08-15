@@ -2,9 +2,9 @@ package org.mechdancer.statemachine.legacy.waiter
 
 import java.util.concurrent.TimeUnit
 
-open class Timer(delay: Long, timeUnit: TimeUnit = TimeUnit.MILLISECONDS, name: String = "Timer") : Waiter(name) {
+open class TimerBlocker(delay: Long, timeUnit: TimeUnit = TimeUnit.MILLISECONDS, name: String = "TimerBlocker") : StateBlocker(name) {
 
-	companion object : Timer(0,name = "DefaultTimer")
+	companion object : TimerBlocker(0,name = "CommonTimerBlocker")
 
 	private var target = TimeUnit.MILLISECONDS.convert(delay, timeUnit)
 		set(value) {

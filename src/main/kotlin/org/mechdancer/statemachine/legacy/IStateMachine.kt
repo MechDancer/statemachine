@@ -1,9 +1,9 @@
 package org.mechdancer.statemachine.legacy
 
-import org.mechdancer.statemachine.legacy.waiter.Waiter
+import org.mechdancer.statemachine.legacy.waiter.StateBlocker
 
 interface IStateMachine {
-	val waiters: List<Waiter>
+	val stateBlockers: List<StateBlocker>
 
 	fun action(state: Int)
 }

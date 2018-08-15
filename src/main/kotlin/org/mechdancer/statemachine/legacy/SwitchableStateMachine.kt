@@ -1,8 +1,8 @@
 package org.mechdancer.statemachine.legacy
 
-import org.mechdancer.statemachine.legacy.waiter.Condition
-import org.mechdancer.statemachine.legacy.waiter.Timer
-import org.mechdancer.statemachine.legacy.waiter.Waiter
+import org.mechdancer.statemachine.legacy.waiter.ConditionBlocker
+import org.mechdancer.statemachine.legacy.waiter.TimerBlocker
+import org.mechdancer.statemachine.legacy.waiter.StateBlocker
 
 abstract class SwitchableStateMachine : IStateMachine, Runnable {
 
@@ -12,13 +12,13 @@ abstract class SwitchableStateMachine : IStateMachine, Runnable {
 	var shouldRunning = true
 	private set
 
-	override val waiters: MutableList<Waiter> = mutableListOf(Condition, Timer)
+	override val stateBlockers: MutableList<StateBlocker> = mutableListOf(ConditionBlocker, TimerBlocker)
 
 	override fun run() {
 		if (!shouldRunning) return
 		action(current)
-		isFinished = waiters.all { !it.isWaiting }
-		waiters.forEach(Waiter::refresh)
+		isFinished = stateBlockers.all { !it.isBlocking }
+		stateBlockers.forEach(StateBlocker::refresh)
 		if (isFinished)
 			jump(current.inc())//使用 `++` 会直接改变 current 值
 	}

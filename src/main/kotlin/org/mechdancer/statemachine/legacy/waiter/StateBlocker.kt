@@ -1,13 +1,13 @@
 package org.mechdancer.statemachine.legacy.waiter
 
-abstract class Waiter(val name: String) {
-	internal var isWaiting: Boolean = false
+abstract class StateBlocker(val name: String) {
+	internal var isBlocking: Boolean = false
 	private var isRunning: Boolean = false
 	protected var finished: Boolean = false
 
 	internal fun refresh() {
 		sync()
-		isWaiting = if (isRunning)
+		isBlocking = if (isRunning)
 			!finished
 		else false
 	}
@@ -15,16 +15,16 @@ abstract class Waiter(val name: String) {
 	protected abstract fun sync()
 
 	protected fun reset() {
-		isWaiting = false
+		isBlocking = false
 		isRunning = false
 		finished = false
 	}
 
-	fun start() {
+	fun enable() {
 		isRunning = true
 	}
 
-	fun teardown() {
+	fun disable() {
 		isRunning = false
 	}
 }
