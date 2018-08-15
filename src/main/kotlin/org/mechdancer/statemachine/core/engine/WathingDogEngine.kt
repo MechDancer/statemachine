@@ -3,45 +3,28 @@ package org.mechdancer.statemachine.core.engine
 import org.mechdancer.statemachine.core.Ending
 import org.mechdancer.statemachine.core.IStateHandler
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeUnit.*
 
 
 /**
  * 计时驱动器
  * 执行到时限则返回done
  */
-class WatchDogEngine(limit: Double,
+class WatchDogEngine(limit: Long,
                      timeUnit: TimeUnit,
                      origin: IStateHandler)
 	: IEngine {
 
-	private companion object {
-		const val HOUR = 1.0 / (60 * 60)
-		const val MINUTE = 1.0 / 60
-		const val SECOND = 1.0
-		const val MS = 1.0E3
-		const val US = 1.0E6
-		const val NS = 1.0E9
-	}
 
 	private var current = origin
-	private var firstInvoke: Long? = null
+	private var firstInvoke: Long = -1
 
-	private val limit = when (timeUnit) {
-		SECONDS      -> limit * SECOND
-		MILLISECONDS -> limit * MS
-		DAYS         -> limit * HOUR * 24
-		HOURS        -> limit * HOUR
-		MICROSECONDS -> limit * US
-		MINUTES      -> limit * MINUTE
-		NANOSECONDS  -> limit * NS
-	}
+	private val limit = TimeUnit.NANOSECONDS.convert(limit, timeUnit)
 
 	/**
 	 * 执行一个状态并向后跳转，超时或结束后返回done
 	 */
 	override fun run(): Boolean = run {
-		if (firstInvoke == null)
+		if (firstInvoke == -1L)
 			firstInvoke = System.nanoTime()
 
 		current is Ending ||
@@ -55,8 +38,8 @@ class WatchDogEngine(limit: Double,
 	 * 超时标记
 	 */
 	val timeOut
-		get() = (System.nanoTime() - firstInvoke!!) * 1E-9 > limit
+		get() = (System.nanoTime() - firstInvoke) > limit
 }
 
-fun delayMachine(limit: Double, timeUnit: TimeUnit) =
+fun delayMachine(limit: Long, timeUnit: TimeUnit) =
 		WatchDogEngine(limit, timeUnit, IStateHandler.Nothing)

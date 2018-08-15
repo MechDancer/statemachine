@@ -1,8 +1,8 @@
 package org.mechdancer.statemachine.legacy
 
 import org.mechdancer.statemachine.legacy.blockers.ConditionBlocker
-import org.mechdancer.statemachine.legacy.blockers.TimerBlocker
 import org.mechdancer.statemachine.legacy.blockers.StateBlocker
+import org.mechdancer.statemachine.legacy.blockers.TimerBlocker
 
 abstract class SwitchableStateMachine : IStateMachine, Runnable {
 
@@ -10,7 +10,7 @@ abstract class SwitchableStateMachine : IStateMachine, Runnable {
 	private var last = 0
 	private var isFinished = false
 	var shouldRunning = true
-	private set
+		private set
 
 	override val stateBlockers: MutableList<StateBlocker> = mutableListOf(ConditionBlocker, TimerBlocker)
 
