@@ -52,7 +52,7 @@ class LinearStateMachineBuilder : IStateMachineBuilder {
 		states.add { engine.run() }
 	}
 
-	fun delay(limit: Double, timeUnit: TimeUnit) = apply {
+	fun delay(limit: Long, timeUnit: TimeUnit) = apply {
 		drive(delayMachine(limit, timeUnit))
 	}
 
