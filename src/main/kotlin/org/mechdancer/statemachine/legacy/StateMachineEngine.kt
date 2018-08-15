@@ -2,6 +2,8 @@ package org.mechdancer.statemachine.legacy
 
 import org.mechdancer.statemachine.legacy.waiter.Waiter
 
+@Deprecated("emmmm", ReplaceWith("org.mechdancer." +
+		"statemachine.legacy.SwitchableStateMachine"))
 class StateMachineEngine(private val stateMachine: IStateMachine) {
 
 
@@ -11,7 +13,7 @@ class StateMachineEngine(private val stateMachine: IStateMachine) {
 
 
 	fun run() = with(stateMachine) {
-		run(current)
+		action(current)
 		isFinished = waiters.all { !it.isWaiting }
 		waiters.forEach(Waiter::refresh)
 		if (isFinished)

@@ -1,16 +1,14 @@
 import org.junit.Test
-import org.mechdancer.statemachine.legacy.StateMachineEngine
 
 class Tester {
 	@Test
 	fun test() {
-		val engine = StateMachineEngine(FooStateMachine())
+		val foo = FooStateMachine()
 
-		while (true) {
-			engine.run()
+		while (foo.shouldRunning) {
+			foo.run()
 			Thread.sleep(100)
 		}
-
 
 	}
 }
