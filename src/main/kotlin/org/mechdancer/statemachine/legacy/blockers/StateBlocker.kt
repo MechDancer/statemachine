@@ -1,4 +1,4 @@
-package org.mechdancer.statemachine.legacy.waiter
+package org.mechdancer.statemachine.legacy.blockers
 
 abstract class StateBlocker(val name: String) {
 	internal var isBlocking: Boolean = false

@@ -1,8 +1,8 @@
 package org.mechdancer.statemachine.legacy
 
-import org.mechdancer.statemachine.legacy.waiter.ConditionBlocker
-import org.mechdancer.statemachine.legacy.waiter.TimerBlocker
-import org.mechdancer.statemachine.legacy.waiter.StateBlocker
+import org.mechdancer.statemachine.legacy.blockers.ConditionBlocker
+import org.mechdancer.statemachine.legacy.blockers.TimerBlocker
+import org.mechdancer.statemachine.legacy.blockers.StateBlocker
 
 abstract class SwitchableStateMachine : IStateMachine, Runnable {
 

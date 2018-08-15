@@ -1,6 +1,6 @@
 import org.mechdancer.statemachine.legacy.SwitchableStateMachine
-import org.mechdancer.statemachine.legacy.waiter.ConditionBlocker
-import org.mechdancer.statemachine.legacy.waiter.TimerBlocker
+import org.mechdancer.statemachine.legacy.blockers.ConditionBlocker
+import org.mechdancer.statemachine.legacy.blockers.TimerBlocker
 
 class FooStateMachine : SwitchableStateMachine() {
 

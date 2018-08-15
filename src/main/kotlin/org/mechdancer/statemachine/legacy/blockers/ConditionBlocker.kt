@@ -1,4 +1,4 @@
-package org.mechdancer.statemachine.legacy.waiter
+package org.mechdancer.statemachine.legacy.blockers
 
 open class ConditionBlocker(private var boolean: Boolean,
                             name: String = "ConditionBlocker") : StateBlocker(name) {

@@ -1,4 +1,4 @@
-package org.mechdancer.statemachine.legacy.waiter
+package org.mechdancer.statemachine.legacy.blockers
 
 import java.util.concurrent.TimeUnit
 
