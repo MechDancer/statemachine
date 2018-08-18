@@ -4,14 +4,22 @@ import org.mechdancer.statemachine.legacy.blockers.ConditionBlocker
 import org.mechdancer.statemachine.legacy.blockers.StateBlocker
 import org.mechdancer.statemachine.legacy.blockers.TimerBlocker
 
+/**
+ * 状态机抽象实现
+ *
+ */
 abstract class SwitchableStateMachine : IStateMachine, Runnable {
 
+	//状态字段
 	private var current = 0
 	private var last = 0
 	private var isFinished = false
+
+	//状态机是否运行
 	var shouldRunning = true
 		private set
 
+	//通用状态阻塞器
 	override val stateBlockers: MutableList<StateBlocker> = mutableListOf(ConditionBlocker, TimerBlocker)
 
 	override fun run() {
