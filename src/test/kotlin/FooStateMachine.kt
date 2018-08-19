@@ -16,7 +16,7 @@ class FooStateMachine : SwitchableStateMachine() {
 	override fun action(state: Int) {
 		when (state) {
 			0 -> {
-				TimerBlocker.reset(300)
+				TimerBlocker.reset(4000)
 				TimerBlocker.enable()
 				println("timer enable!")
 			}
@@ -33,7 +33,7 @@ class FooStateMachine : SwitchableStateMachine() {
 				ConditionBlocker.reset(true)
 			}
 			4 -> {
-				TimerBlocker.reset(200)
+				TimerBlocker.reset(6000)
 				TimerBlocker.enable()
 				println("timer reset")
 			}
