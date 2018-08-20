@@ -1,40 +1,28 @@
-import org.mechdancer.statemachine.common.Event
-import org.mechdancer.statemachine.common.State
-import org.mechdancer.statemachine.common.StateMachine
+import org.mechdancer.statemachine.common.*
+
+typealias S = Pair<Int, Int>
 
 fun main(args: Array<String>) {
-	val state1: State<Pair<Int, Int>, Unit> = { (0 to 0) to Unit }
-	val state2: State<Pair<Int, Int>, Boolean> = { it to (it.first <= 100) }
-	val state3: State<Pair<Int, Int>, Unit> = { (it.first + 1 to it.second) to Unit }
-	val state4: State<Pair<Int, Int>, Unit> = {
+
+	val init: State<S, Unit> = { (0 to 0) to Unit }
+	val check: State<S, Boolean> = { it to (it.first <= 100) }
+	val update: State<S, Unit> = { (it.first + 1 to it.second) to Unit }
+	val body: State<S, Unit> = {
 		(it.first + it.second).let { sum ->
 			println(sum)
 			(it.first to sum) to Unit
 		}
 	}
-	val finish: State<Pair<Int, Int>, Unit> = { (0 to 0) to Unit }
+	val final = Final<S>()
 
-	val done1: Event<Pair<Int, Int>, Unit> = { m, _ ->
-		StateMachine(state2, m.state)
-	}
-	val done2: Event<Pair<Int, Int>, Boolean> = { m, v ->
-		StateMachine(if (v) state4 else finish, m.state)
-	}
-	val done3: Event<Pair<Int, Int>, Unit> = { m, _ ->
-		StateMachine(state2, m.state)
-	}
-	val done4: Event<Pair<Int, Int>, Unit> = { m, _ ->
-		StateMachine(state3, m.state)
-	}
-
-	val map = mapOf<State<Pair<Int, Int>, *>, Event<Pair<Int, Int>, *>>(
-		state1 to done1,
-		state2 to done2,
-		state3 to done3,
-		state4 to done4
+	val engine = Engine(
+		init to move(check),
+		check to predication(body, final),
+		body to move(update),
+		update to move(check),
+		final to stay()
 	)
 
-	var machine = StateMachine(state1, 0 to 0)
-	while (!(machine.current === finish))
-		machine().let { machine = map[machine.current]!!(it.first, it.second) }
+	engine.startOn(StateMachine(init, 0 to 0))
+	while (engine.drive());
 }
