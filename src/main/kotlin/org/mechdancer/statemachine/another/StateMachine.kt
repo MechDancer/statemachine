@@ -11,7 +11,7 @@ class StateMachine<T : IState>(private val origin: T) {
 
 	//按检查结果转移
 	private infix fun (() -> Boolean).trans(target: T?) =
-		synchronized(lock) { this().also { if (it) current = target } }
+			synchronized(lock) { this().also { if (it) current = target } }
 
 	/** 当前状态 */
 	var current: T? = origin
@@ -38,26 +38,27 @@ class StateMachine<T : IState>(private val origin: T) {
 	 * @return 转移事件
 	 */
 	infix fun register(pair: Pair<T, T>) =
-		event(pair).also {
-			if (pair.first === pair.second) return@also
-			targets[pair.first]?.add(pair.second)
-				?: run { targets[pair.first] = mutableSetOf(pair.second) }
-			targets[pair.second]
-				?: run { targets[pair.second] = mutableSetOf() }
-		}
+			event(pair).also {
+				if (pair.first === pair.second) return@also
+				targets[pair.first]?.add(pair.second)
+						?: run { targets[pair.first] = mutableSetOf(pair.second) }
+				targets[pair.second]
+						?: run { targets[pair.second] = mutableSetOf() }
+			}
 
 	/**
 	 * 驱动状态机运行一个周期
 	 * 运行结束后若外部状态未引发状态转移则触发一个状态转移事件
 	 */
 	fun execute() {
-		if (current == null) return
-		val last = current!!
-		last.doing();
-		{ current === last } trans
-			(targets[last]
-				?.firstOrNull { event(last to it)() }
-				?: last.takeIf { last.loop && event(it to it)() })
+		current?.let { last ->
+			last.doing();
+			{ current === last } trans
+					(targets[last]
+							?.firstOrNull { event(last to it)() }
+							?: last.takeIf { last.loop && event(it to it)() })
+		}
+
 	}
 
 	/**
@@ -67,7 +68,7 @@ class StateMachine<T : IState>(private val origin: T) {
 	 * @return 是否发生转移
 	 */
 	fun transfer(target: T?) =
-		{ current?.after() != false && target?.before() != false } trans target
+			{ current?.after() != false && target?.before() != false } trans target
 
 	/**
 	 * 无源跳转到初始状态

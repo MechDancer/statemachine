@@ -1,6 +1,6 @@
-import StateTest.*
 import org.mechdancer.statemachine.another.IState
 import org.mechdancer.statemachine.another.StateMachine
+import org.mechdancer.statemachine.another.state
 
 var i = 0
 
@@ -21,10 +21,28 @@ enum class StateTest : IState {
 }
 
 fun main(args: Array<String>) {
-	val `for` = StateMachine(Init)
-	`for` register (Init to Print)
-	`for` register (Print to Add)
-	`for` register (Add to Print)
 
-	while (!`for`.done) `for`.execute()
+	val init = state {
+		doing { i = 0 }
+	}
+
+	val add = state {
+		doing { i ++ }
+		before { i < 20 }
+	}
+
+	val print = state {
+		doing { println(i) }
+	}
+
+	val `for` = StateMachine(init)
+
+	`for` register (init to add)
+	`for` register (add to print)
+	`for` register (print to add)
+
+	while (!`for`.done) {
+		`for`.execute()
+		Thread.sleep(100)
+	}
 }
