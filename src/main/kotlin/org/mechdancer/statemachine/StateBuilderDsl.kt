@@ -1,39 +1,20 @@
 package org.mechdancer.statemachine
 
-class StateBuilderDsl {
-	private var before = { true }
+/** DSL缓存 */
+data class StateBuilderDsl(
+	var before: () -> Boolean = { true },
+	var doing: () -> Unit = {},
+	var after: () -> Boolean = { true },
+	var loop: Boolean = false
+)
 
-	private var doing = {}
-
-	private var after = { true }
-
-	var loop = false
-
-	fun before(block: () -> Boolean) {
-		before = block
-	}
-
-	fun doing(block: () -> Unit) {
-		doing = block
-	}
-
-	fun after(block: () -> Boolean) {
-		after = block
-	}
-
-	internal fun build() = object : IState {
-		override val loop: Boolean = this@StateBuilderDsl.loop
-		override fun doing() =
-				this@StateBuilderDsl.doing()
-
-		override fun after(): Boolean =
-				this@StateBuilderDsl.after()
-
-		override fun before(): Boolean =
-				this@StateBuilderDsl.before()
-
-	}
-}
-
+/** dsl构造状态 */
 fun state(block: StateBuilderDsl.() -> Unit) =
-		StateBuilderDsl().apply(block).build()
+	StateBuilderDsl().apply(block).let {
+		object : IState {
+			override val loop = it.loop
+			override fun doing() = it.doing()
+			override fun after() = it.after()
+			override fun before() = it.before()
+		}
+	}
