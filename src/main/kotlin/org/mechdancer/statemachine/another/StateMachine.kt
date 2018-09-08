@@ -10,7 +10,8 @@ class StateMachine<T : IState>(private val origin: T) {
 	private val lock = Any()
 
 	//按检查结果转移
-	private infix fun Boolean.trans(target: T?) = also { if (it) current = target }
+	private infix fun (() -> Boolean).trans(target: T?) =
+		synchronized(lock) { this().also { if (it) current = target } }
 
 	/** 当前状态 */
 	var current: T? = origin
@@ -28,9 +29,7 @@ class StateMachine<T : IState>(private val origin: T) {
 	 * @return 转移事件
 	 */
 	fun event(pair: Pair<T, T>) = {
-		synchronized(lock) {
-			(current === pair.first && pair.first.after() && pair.second.before()) trans pair.second
-		}
+		{ current === pair.first && pair.first.after() && pair.second.before() } trans pair.second
 	}
 
 	/**
@@ -50,18 +49,15 @@ class StateMachine<T : IState>(private val origin: T) {
 	/**
 	 * 驱动状态机运行一个周期
 	 * 运行结束后若外部状态未引发状态转移则触发一个状态转移事件
-	 * @return 是否发生转移
 	 */
-	fun execute(): Boolean {
-		if (current == null) return false
-		val current = current!!
-		current.doing()
-		return synchronized(lock) {
-			(this.current === current) trans
-				(targets[current]
-					?.firstOrNull { event(current to it)() }
-					?: current.takeIf { current.loop && event(it to it)() })
-		}
+	fun execute() {
+		if (current == null) return
+		val last = current!!
+		last.doing();
+		{ current === last } trans
+			(targets[last]
+				?.firstOrNull { event(last to it)() }
+				?: last.takeIf { last.loop && event(it to it)() })
 	}
 
 	/**
@@ -71,9 +67,7 @@ class StateMachine<T : IState>(private val origin: T) {
 	 * @return 是否发生转移
 	 */
 	fun transfer(target: T?) =
-		synchronized(lock) {
-			(current?.after() != false && target?.before() != false) trans target
-		}
+		{ current?.after() != false && target?.before() != false } trans target
 
 	/**
 	 * 无源跳转到初始状态
