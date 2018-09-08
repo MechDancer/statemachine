@@ -101,14 +101,14 @@ dependencies {
 
   ```kotlin
   val init = state {
-  	doing = { i = 0 }
+      doing = { i = 0 }
   }
   val add = state {
       before = { i < 20 }
-  	doing = { ++i }
+      doing = { ++i }
   }
   val print = state {
-  	doing { println(i) }
+      doing { println(i) }
   }
   ```
 
