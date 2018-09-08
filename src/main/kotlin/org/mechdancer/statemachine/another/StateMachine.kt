@@ -9,6 +9,9 @@ class StateMachine<T : IState>(private val origin: T) {
 	//状态转移互斥锁
 	private val lock = Any()
 
+	//按检查结果转移
+	private infix fun Boolean.trans(target: T?) = also { if (it) current = target }
+
 	/** 当前状态 */
 	var current: T? = origin
 		private set
@@ -26,8 +29,7 @@ class StateMachine<T : IState>(private val origin: T) {
 	 */
 	fun event(pair: Pair<T, T>) = {
 		synchronized(lock) {
-			(current === pair.first && pair.first.after() && pair.second.before())
-					.also { if (it) current = pair.second }
+			(current === pair.first && pair.first.after() && pair.second.before()) trans pair.second
 		}
 	}
 
@@ -37,42 +39,45 @@ class StateMachine<T : IState>(private val origin: T) {
 	 * @return 转移事件
 	 */
 	infix fun register(pair: Pair<T, T>) =
-			event(pair).also {
-				if (pair.first === pair.second) return@also
-				targets[pair.first]?.add(pair.second)
-						?: run { targets[pair.first] = mutableSetOf(pair.second) }
-				targets[pair.second]
-						?: run { targets[pair.second] = mutableSetOf() }
-			}
+		event(pair).also {
+			if (pair.first === pair.second) return@also
+			targets[pair.first]?.add(pair.second)
+				?: run { targets[pair.first] = mutableSetOf(pair.second) }
+			targets[pair.second]
+				?: run { targets[pair.second] = mutableSetOf() }
+		}
 
 	/**
 	 * 驱动状态机运行一个周期
 	 * 运行结束后若外部状态未引发状态转移则触发一个状态转移事件
+	 * @return 是否发生转移
 	 */
-	fun execute() {
-		if (current == null) return
+	fun execute(): Boolean {
+		if (current == null) return false
 		val current = current!!
 		current.doing()
-		synchronized(lock) {
-			if (this.current === current)
-				this.current = targets[current]
-						?.firstOrNull { event(current to it)() }
-						?: current.takeIf { current.loop && event(it to it)() }
+		return synchronized(lock) {
+			(this.current === current) trans
+				(targets[current]
+					?.firstOrNull { event(current to it)() }
+					?: current.takeIf { current.loop && event(it to it)() })
 		}
 	}
 
 	/**
 	 * 无源跳转
 	 * 不判断当前状态，直接去往目标状态
+	 * @param target 目标状态
+	 * @return 是否发生转移
 	 */
-	fun transfer(target: T?) {
+	fun transfer(target: T?) =
 		synchronized(lock) {
-			if (current?.after() != false && target?.before() != false) current = target
+			(current?.after() != false && target?.before() != false) trans target
 		}
-	}
 
 	/**
 	 * 无源跳转到初始状态
+	 * @return 是否发生转移
 	 */
 	fun reset() = transfer(origin)
 }
