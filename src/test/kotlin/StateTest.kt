@@ -6,26 +6,25 @@ var i = 0
 
 enum class StateTest : IState {
 	Init {
+		override val loop = false
 		override fun invoke() = run { i = 0 }
-		override fun preCheck() = true
-		override fun sufCheck() = true
 	},
 	Add {
+		override val loop = false
 		override fun invoke() = run { ++i; Unit }
-		override fun preCheck() = i < 20
-		override fun sufCheck() = true
+		override fun before() = i < 20
 	},
 	Print {
+		override val loop = false
 		override fun invoke() = run { println(i) }
-		override fun preCheck() = true
-		override fun sufCheck() = true
 	}
 }
 
 fun main(args: Array<String>) {
-	val _for = StateMachine(Init)
-	_for register (Init to Print)
-	_for register (Print to Add)
-	_for register (Add to Print)
-	while (!_for.done) _for()
+	val `for` = StateMachine(Init)
+	`for` register (Init to Print)
+	`for` register (Print to Add)
+	`for` register (Add to Print)
+
+	while (!`for`.done) `for`()
 }

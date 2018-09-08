@@ -1,15 +1,13 @@
 package org.mechdancer.statemachine.another
 
-class StateMachine<T : IState>(origin: T) {
+/**
+ * 状态机
+ * @param T 状态类型。不是强制的，但为了安全环保，建议定义一个枚举。
+ * @param origin 初始状态
+ */
+class StateMachine<T : IState>(val origin: T) {
+	//状态转移互斥锁
 	private val lock = Any()
-
-	//构造状态转移事件
-	private fun event(pair: Pair<T, T>) = {
-		synchronized(lock) {
-			(current === pair.first && pair.first.sufCheck() && pair.second.preCheck())
-				.also { if (it) current = pair.second }
-		}
-	}
 
 	/** 当前状态 */
 	var current: T? = origin
@@ -18,8 +16,20 @@ class StateMachine<T : IState>(origin: T) {
 	/** 目标状态表 */
 	private val targets = mutableMapOf<T, MutableSet<T>>()
 
-	/** 执行完毕 */
+	/** 执行完毕检查 */
 	val done get() = current === null
+
+	/**
+	 * 构造事件，但不注册到事件通路
+	 * @param pair 事件对
+	 * @return 转移事件
+	 */
+	fun event(pair: Pair<T, T>) = {
+		synchronized(lock) {
+			(current === pair.first && pair.first.after() && pair.second.before())
+				.also { if (it) current = pair.second }
+		}
+	}
 
 	/**
 	 * 注册事件通路
@@ -47,7 +57,22 @@ class StateMachine<T : IState>(origin: T) {
 			if (this.current === current)
 				this.current = targets[current]
 					?.firstOrNull { event(current to it)() }
-			//TODO ?: current.takeIf { event(it to it)() } //直接去掉有bug，死循环
+					?: current.takeIf { current.loop && event(it to it)() }
 		}
 	}
+
+	/**
+	 * 无源跳转
+	 * 不判断当前状态，直接去往目标状态
+	 */
+	fun transfer(target: T?) {
+		synchronized(lock) {
+			if (current?.after() != false && target?.before() != false) current = target
+		}
+	}
+
+	/**
+	 * 无源跳转到初始状态
+	 */
+	fun reset() = transfer(origin)
 }
