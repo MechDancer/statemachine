@@ -1,7 +1,9 @@
 package org.mechdancer.statemachine.test
 
 import org.mechdancer.statemachine.StateMachine
+import org.mechdancer.statemachine.delay
 import org.mechdancer.statemachine.state
+import java.util.concurrent.TimeUnit.SECONDS
 
 fun main(args: Array<String>) {
 	var i = 0
@@ -10,22 +12,24 @@ fun main(args: Array<String>) {
 		doing = { i = 0 }
 	}
 
-	val add = state {
-		before = { i < 20 }
-		doing = { i++ }
-	}
+	val `for` = StateMachine(init)
 
 	val print = state {
 		doing = { println(i) }
 	}
 
-	val `for` = StateMachine(init)
+	val add = state {
+		before = { i < 20 }
+		doing = {
+			i++
+			delay(1L to SECONDS) { `for`.transfer(print) }
+		}
+	}
 
 	`for` register (init to add)
-	`for` register (add to print)
 	`for` register (print to add)
 
-	while (!`for`.done) {
+	while (i < 20) {
 		`for`.execute()
 		Thread.sleep(100)
 	}
