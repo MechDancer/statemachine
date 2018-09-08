@@ -1,4 +1,4 @@
-package org.mechdancer.statemachine.another
+package org.mechdancer.statemachine
 
 /** 状态 */
 interface IState {

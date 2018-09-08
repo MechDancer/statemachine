@@ -1,6 +1,8 @@
-import org.mechdancer.statemachine.another.IState
-import org.mechdancer.statemachine.another.StateMachine
-import org.mechdancer.statemachine.another.state
+package org.mechdancer.statemachine.test
+
+import org.mechdancer.statemachine.IState
+import org.mechdancer.statemachine.StateMachine
+import org.mechdancer.statemachine.state
 
 var i = 0
 
@@ -27,7 +29,7 @@ fun main(args: Array<String>) {
 	}
 
 	val add = state {
-		doing { i ++ }
+		doing { i++ }
 		before { i < 20 }
 	}
 

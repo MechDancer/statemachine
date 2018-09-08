@@ -1,4 +1,4 @@
-package org.mechdancer.statemachine.another
+package org.mechdancer.statemachine
 
 class StateBuilderDsl {
 	private var before = { true }
