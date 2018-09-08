@@ -12,5 +12,5 @@ interface IState {
 	fun after() = true
 
 	/** 状态动作 */
-	operator fun invoke()
+	fun doing()
 }

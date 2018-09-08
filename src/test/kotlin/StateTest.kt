@@ -7,16 +7,16 @@ var i = 0
 enum class StateTest : IState {
 	Init {
 		override val loop = false
-		override fun invoke() = run { i = 0 }
+		override fun doing() = run { i = 0 }
 	},
 	Add {
 		override val loop = false
-		override fun invoke() = run { ++i; Unit }
+		override fun doing() = run { ++i; Unit }
 		override fun before() = i < 20
 	},
 	Print {
 		override val loop = false
-		override fun invoke() = run { println(i) }
+		override fun doing() = run { println(i) }
 	}
 }
 
@@ -26,5 +26,5 @@ fun main(args: Array<String>) {
 	`for` register (Print to Add)
 	`for` register (Add to Print)
 
-	while (!`for`.done) `for`()
+	while (!`for`.done) `for`.execute()
 }
