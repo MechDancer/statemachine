@@ -101,14 +101,14 @@ dependencies {
 
   ```kotlin
   val init = state {
-  	doing = { i = 0 }
+      doing = { i = 0 }
   }
   val add = state {
       before = { i < 20 }
-  	doing = { ++i }
+      doing = { ++i }
   }
   val print = state {
-  	doing { println(i) }
+      doing { println(i) }
   }
   ```
 
@@ -138,6 +138,6 @@ dependencies {
 
    基于定义，此模型也支持无限状态状态机，甚至在运行间动态添加新的状态和事件。
 
-# 示例
+## 示例
 
 完整示例代码可以在 [这里](https://github.com/MechDancer/statemachine/blob/dev/src/test/kotlin/org/mechdancer/statemachine/test/StateTest.kt) 找到。
