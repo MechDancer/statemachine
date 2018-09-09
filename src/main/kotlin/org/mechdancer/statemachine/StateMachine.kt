@@ -6,6 +6,11 @@ package org.mechdancer.statemachine
  * @param origin 初始状态
  */
 class StateMachine<T : IState>(private val origin: T) {
+	companion object {
+		const val ACCEPT = true
+		const val REJECT = false
+	}
+
 	//状态转移互斥锁
 	private val lock = Any()
 
@@ -55,7 +60,7 @@ class StateMachine<T : IState>(private val origin: T) {
 			{ current === last } trans
 				(targets[last]
 					?.firstOrNull { event(last to it)() }
-					?: last.takeIf { last.loop && event(it to it)() })
+					?: last.takeIf { last.loop })
 		}
 	}
 
@@ -65,12 +70,9 @@ class StateMachine<T : IState>(private val origin: T) {
 	 * @param target 目标状态
 	 * @return 是否发生转移
 	 */
-	fun transfer(target: T?) =
-		{ current?.after() != false && target?.before() != false } trans target
+	infix fun transfer(target: T?) =
+		{ current?.after() != REJECT && target?.before() != REJECT } trans target
 
-	/**
-	 * 无源跳转到初始状态
-	 * @return 是否发生转移
-	 */
+
 	fun reset() = transfer(origin)
 }

@@ -1,7 +1,9 @@
-package org.mechdancer.statemachine
+package org.mechdancer.statemachine.dsl
+
+import org.mechdancer.statemachine.IState
 
 /** DSL缓存 */
-data class StateBuilderDsl(
+data class StateDsl(
 	var before: () -> Boolean = { true },
 	var doing: () -> Unit = {},
 	var after: () -> Boolean = { true },
@@ -9,8 +11,8 @@ data class StateBuilderDsl(
 )
 
 /** dsl构造状态 */
-fun state(block: StateBuilderDsl.() -> Unit) =
-	StateBuilderDsl().apply(block).let {
+fun state(block: StateDsl.() -> Unit) =
+	StateDsl().apply(block).let {
 		object : IState {
 			override val loop = it.loop
 			override fun doing() = it.doing()
