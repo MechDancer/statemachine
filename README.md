@@ -11,7 +11,7 @@
 
 在此也要感谢 .Net 下状态机库 [Stateless](http://www.hanselman.com/blog/Stateless30AStateMachineLibraryForNETCore.aspx) 带来的启发，希望这个简单的实现，能使有趣的状态机模式在机器人行为控制中得到发展。
 
-*（ 2018 年 8 月 9 日 ）*
+*（ 2018 年 9 月 9 日 ）*
 
 ## 开始使用
 
