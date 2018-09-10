@@ -1,6 +1,6 @@
 package org.mechdancer.statemachine.test
 
-import org.mechdancer.statemachine.dsl.linearMachine
+import org.mechdancer.statemachine.builder.linearMachine
 import org.mechdancer.statemachine.run
 
 fun main(args: Array<String>) {

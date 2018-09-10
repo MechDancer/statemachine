@@ -1,4 +1,4 @@
-package org.mechdancer.statemachine.dsl
+package org.mechdancer.statemachine.builder
 
 import org.mechdancer.statemachine.core.IState
 import org.mechdancer.statemachine.core.IStateMachine
@@ -6,7 +6,7 @@ import org.mechdancer.statemachine.core.IStateMachine.Companion.ACCEPT
 import java.util.concurrent.atomic.AtomicInteger
 
 /** 线性状态机缓存 */
-class LinearStateMachineDsl {
+class LinearStateMachineBuilderDsl {
 	private var machine = IStateMachine.create<LinearState>()
 	private var last: LinearState? = null
 	private fun LinearState.add() = also {
@@ -61,5 +61,5 @@ class LinearStateMachineDsl {
 }
 
 /** 构造线性状态机 */
-fun linearMachine(block: LinearStateMachineDsl.() -> Unit) =
-	LinearStateMachineDsl().apply(block).build()
+fun linearMachine(block: LinearStateMachineBuilderDsl.() -> Unit) =
+	LinearStateMachineBuilderDsl().apply(block).build()
