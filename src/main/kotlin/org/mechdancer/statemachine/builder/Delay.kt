@@ -1,6 +1,6 @@
 package org.mechdancer.statemachine.builder
 
-import org.mechdancer.statemachine.core.IStateMachine
+import org.mechdancer.statemachine.core.StateMachine
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
@@ -17,7 +17,7 @@ fun delay(block: DelayBuilderDsl.() -> Unit) =
 		state {
 			var start = 0L
 			loop = true
-			before = { start = System.nanoTime(); IStateMachine.ACCEPT }
+			before = { start = System.nanoTime(); StateMachine.ACCEPT }
 			after = DelayBuilderDsl().apply(block).nano
 					.let { { (System.nanoTime() - start) > it } }
 		}

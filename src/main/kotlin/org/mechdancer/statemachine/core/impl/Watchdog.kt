@@ -1,5 +1,7 @@
-package org.mechdancer.statemachine.core
+package org.mechdancer.statemachine.core.impl
 
+import org.mechdancer.statemachine.core.IState
+import org.mechdancer.statemachine.core.StateMachine
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -15,19 +17,16 @@ import java.util.concurrent.locks.ReentrantLock
  * @param unit 时间单位
  */
 class Watchdog<T : IState>(
-	private val machine: IStateMachine<T>,
-	private val source: T?,
-	private val target: T?,
-	private val time: Long,
-	private val unit: TimeUnit) {
+		private val machine: StateMachine<T>,
+		private val source: T?,
+		private val target: T?,
+		private val time: Long,
+		private val unit: TimeUnit) {
 
 	//一条狗只能注册一次叫
 	private val lock = ReentrantLock()
 
-	/**
-	 * 启动狗
-	 * @return 是否开始了新的任务
-	 */
+
 	fun start() =
 		lock.tryLock().also {
 			if (it)

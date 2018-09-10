@@ -3,8 +3,8 @@ package org.mechdancer.statemachine.test
 import org.mechdancer.statemachine.builder.delay
 import org.mechdancer.statemachine.builder.state
 import org.mechdancer.statemachine.core.IState
-import org.mechdancer.statemachine.core.IStateMachine.Companion.ACCEPT
-import org.mechdancer.statemachine.core.Watchdog
+import org.mechdancer.statemachine.core.StateMachine.Companion.ACCEPT
+import org.mechdancer.statemachine.core.impl.Watchdog
 import org.mechdancer.statemachine.run
 import org.mechdancer.statemachine.stateMachine
 import java.util.concurrent.TimeUnit.SECONDS
