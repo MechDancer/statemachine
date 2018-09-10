@@ -1,5 +1,7 @@
 package org.mechdancer.statemachine.test
 
+import org.mechdancer.statemachine.StateMachine.Companion.ACCEPT
+import org.mechdancer.statemachine.WatchDog
 import org.mechdancer.statemachine.dsl.stateMachine
 import org.mechdancer.statemachine.run
 import java.util.concurrent.TimeUnit.SECONDS
@@ -19,6 +21,8 @@ fun main(args: Array<String>) {
 			doing = { println(i) }
 		}
 		val add = state {
+			val dog = WatchDog(machine, null, null, 5, SECONDS)
+			before = { dog.start(); ACCEPT }
 			doing = { i++ }
 			after = { i < 20 }
 		}

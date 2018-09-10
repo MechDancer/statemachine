@@ -7,15 +7,15 @@ package org.mechdancer.statemachine
  */
 class StateMachine<T : IState>(private val origin: T) {
 	companion object {
-		const val ACCEPT = true
-		const val REJECT = false
+		const val ACCEPT = true  //接受：同意转移
+		const val REJECT = false //驳回：拒绝转移
 	}
 
 	//状态转移互斥锁
 	private val lock = Any()
 
 	//按检查结果转移
-	private infix fun (() -> Boolean).trans(target: T?) =
+	private infix fun Event.trans(target: T?) =
 		synchronized(lock) { this().also { if (it) current = target } }
 
 	/** 当前状态 */
@@ -73,6 +73,18 @@ class StateMachine<T : IState>(private val origin: T) {
 	infix fun transfer(target: T?) =
 		{ current?.after() != REJECT && target?.before() != REJECT } trans target
 
+	/**
+	 * 强制跳转
+	 * 不考虑当前状态，直接去往目标状态
+	 * @param target 目标状态
+	 * @return 是否发生转移
+	 */
+	infix fun jump(target: T?) =
+		{ target?.before() != REJECT } trans target
 
+	/**
+	 * 重置
+	 * 直接跳转到初始状态
+	 */
 	fun reset() = transfer(origin)
 }
