@@ -14,12 +14,12 @@ import java.util.concurrent.locks.ReentrantLock
  * @param time 狗叫延时
  * @param unit 时间单位
  */
-class WatchingDog<T : IState>(
-		private val machine: StateMachine<T>,
-		private val source: T?,
-		private val target: T?,
-		private val time: Long,
-		private val unit: TimeUnit) {
+class Watchdog<T : IState>(
+	private val machine: IStateMachine<T>,
+	private val source: T?,
+	private val target: T?,
+	private val time: Long,
+	private val unit: TimeUnit) {
 
 	/**
 	 * 锁

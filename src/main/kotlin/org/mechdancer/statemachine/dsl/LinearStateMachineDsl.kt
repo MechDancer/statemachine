@@ -1,24 +1,18 @@
 package org.mechdancer.statemachine.dsl
 
 import org.mechdancer.statemachine.core.IState
-import org.mechdancer.statemachine.core.StateMachine
-import org.mechdancer.statemachine.core.StateMachine.Companion.ACCEPT
+import org.mechdancer.statemachine.core.IStateMachine
+import org.mechdancer.statemachine.core.IStateMachine.Companion.ACCEPT
 import java.util.concurrent.atomic.AtomicInteger
 
 /** 线性状态机缓存 */
 class LinearStateMachineDsl {
-	private var _machine: StateMachine<LinearState>? = null
-	private var _last: LinearState? = null
-
+	private var machine = IStateMachine.create<LinearState>()
+	private var last: LinearState? = null
 	private fun LinearState.add() = also {
-		if (_machine == null) _machine = StateMachine.create(it)
-		if (_last != null) _machine?.register(_last!! to it)
-		_last = it
-	}
-
-	/** 基于次数执行的线性状态 */
-	abstract class LinearState(times: Int) : IState {
-		var ttl = AtomicInteger(times)
+		machine.startFrom(it)
+		last?.let { last -> machine register (last to it) }
+		last = it
 	}
 
 	/**
@@ -50,14 +44,19 @@ class LinearStateMachineDsl {
 	fun forever(block: () -> Unit) = call(Int.MAX_VALUE, block)
 
 	/** 获取时添加末状态以便退出 */
-	fun build(): StateMachine<LinearState> {
+	fun build(): IStateMachine<LinearState> {
 		object : LinearState(0) {
 			override val loop = false
 			override fun before() = true
 			override fun doing() = Unit
 			override fun after() = true
 		}.add()
-		return _machine!!
+		return machine
+	}
+
+	/** 基于次数执行的线性状态 */
+	abstract class LinearState(times: Int) : IState {
+		var ttl = AtomicInteger(times)
 	}
 }
 

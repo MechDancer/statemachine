@@ -1,69 +1,68 @@
 package org.mechdancer.statemachine.core
 
 import org.mechdancer.statemachine.Event
-import org.mechdancer.statemachine.core.impl.StateMachineImpl
+import org.mechdancer.statemachine.core.IStateMachine.Companion.REJECT
+import org.mechdancer.statemachine.otherwise
+import org.mechdancer.statemachine.then
 
-interface StateMachine<T : IState> {
+/**
+ * 状态机
+ * @param T 状态类型。不是强制的，但为了安全环保，建议定义一个枚举。
+ * @param origin 初始状态
+ */
+class StateMachine<T : IState>
+internal constructor(private var origin: T?)
+	: IStateMachine<T> {
+	//状态转移互斥锁
+	private val lock = Any()
 
-	/** 当前状态 */
-	val current: T?
+	//按检查结果转移
+	private infix fun Event.trans(target: T?) =
+		synchronized(lock) { this().then { current = target } }
 
-	/** 执行完毕检查 */
-	val isCompleted: Boolean
+	// 目标状态表
+	private val targets = mutableMapOf<T, MutableSet<T>>()
 
-	/**
-	 * 注册事件通路
-	 * @param pair 事件对
-	 * @return 转移事件
-	 */
-	infix fun register(pair: Pair<T, T>): Event
+	override var current: T? = origin
+		private set
 
-	/**
-	 * 无源跳转
-	 * 不判断当前状态，直接去往目标状态
-	 * @param target 目标状态
-	 * @return 是否发生转移
-	 */
-	infix fun transfer(target: T?): Boolean
+	override val isCompleted: Boolean
+		get() = current === null
 
-	/**
-	 * 构造事件，但不注册到事件通路
-	 * @param pair 事件对
-	 * @return 转移事件
-	 */
-	fun event(pair: Pair<T, T>): Event
+	override fun event(pair: Pair<T, T>) =
+		{ { current === pair.first && pair.first.after() && pair.second.before() } trans pair.second }
 
-	/**
-	 * 强制跳转
-	 * 不考虑当前状态，直接去往目标状态
-	 * @param target 目标状态
-	 * @return 是否发生转移
-	 */
-	infix fun goto(target: T?): Boolean
+	override infix fun register(pair: Pair<T, T>) =
+		event(pair).also {
+			(pair.first === pair.second).otherwise {
+				targets[pair.first]?.add(pair.second)
+					?: run { targets[pair.first] = mutableSetOf(pair.second) }
+				targets[pair.second]
+					?: run { targets[pair.second] = mutableSetOf() }
+			}
+		}
 
-	/**
-	 * 重置
-	 * 直接跳转到初始状态
-	 * @return 跳转是否成功
-	 */
-	fun reset(): Boolean
-
-	/**
-	 * 指定新源节点，并跳转到此节点
-	 * @return 指定是否成功
-	 */
-	fun startFrom(newOrigin: T): Boolean
-
-	/**
-	 * 驱动状态机运行一个周期
-	 * 运行结束后若外部状态未引发状态转移则触发一个状态转移事件
-	 */
-	operator fun invoke()
-
-	companion object {
-		const val ACCEPT = true  //接受：同意转移
-		const val REJECT = false //驳回：拒绝转移
-
-		fun <T : IState> create(init: T? = null): StateMachine<T> = StateMachineImpl(init)
+	override operator fun invoke() {
+		current?.let { last ->
+			last.doing();
+			{ current === last } trans
+				(targets[last]
+					?.firstOrNull { event(last to it)() }
+					?: last.takeIf { last.loop })
+		}
 	}
+
+	override infix fun transfer(target: T?) =
+		{ current?.after() != REJECT && target?.before() != REJECT } trans target
+
+	override infix fun goto(target: T?) =
+		{ target?.before() != REJECT } trans target
+
+	override fun reset() = transfer(origin)
+
+	override fun startFrom(newOrigin: T) =
+		isCompleted.then {
+			origin = newOrigin
+			reset()
+		}
 }
