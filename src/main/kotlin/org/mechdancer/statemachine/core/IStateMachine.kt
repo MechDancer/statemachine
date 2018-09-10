@@ -4,12 +4,18 @@ import org.mechdancer.statemachine.Event
 
 /** 状态机 */
 interface IStateMachine<T : IState> {
-
 	/** 当前状态 */
 	val current: T?
 
-	/** 执行完毕检查 */
+	/** 是否执行完毕 */
 	val isCompleted: Boolean
+
+	/**
+	 * 构造事件，但不注册到事件通路
+	 * @param pair 事件对
+	 * @return 转移事件
+	 */
+	fun event(pair: Pair<T, T>): Event
 
 	/**
 	 * 注册事件通路
@@ -27,13 +33,7 @@ interface IStateMachine<T : IState> {
 	infix fun transfer(target: T?): Boolean
 
 	/**
-	 * 构造事件，但不注册到事件通路
-	 * @param pair 事件对
-	 * @return 转移事件
-	 */
-	fun event(pair: Pair<T, T>): Event
-
-	/**
+	 * > 不安全 <
 	 * 强制跳转
 	 * 不考虑当前状态，直接去往目标状态
 	 * @param target 目标状态
@@ -64,6 +64,7 @@ interface IStateMachine<T : IState> {
 		const val ACCEPT = true  //接受：同意转移
 		const val REJECT = false //驳回：拒绝转移
 
+		/** 构造默认状态机 */
 		fun <T : IState> create(init: T? = null): IStateMachine<T> =
 			StateMachine(init)
 	}

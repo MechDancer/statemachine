@@ -21,10 +21,7 @@ class Watchdog<T : IState>(
 	private val time: Long,
 	private val unit: TimeUnit) {
 
-	/**
-	 * 锁
-	 * 一条狗只能注册一次叫
-	 */
+	//一条狗只能注册一次叫
 	private val lock = ReentrantLock()
 
 	/**
@@ -32,14 +29,14 @@ class Watchdog<T : IState>(
 	 * @return 是否开始了新的任务
 	 */
 	fun start() =
-			lock.tryLock().also {
-				if (it)
-					scheduler.schedule({
-						if (source in setOf(null, machine.current))
-							machine goto target
-						lock.unlock()
-					}, time, unit)
-			}
+		lock.tryLock().also {
+			if (it)
+				scheduler.schedule({
+					if (source in setOf(null, machine.current))
+						machine goto target
+					lock.unlock()
+				}, time, unit)
+		}
 
 	private companion object {
 		/** 默认调度器 */
