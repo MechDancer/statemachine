@@ -1,20 +1,20 @@
 package org.mechdancer.statemachine.test
 
-import org.mechdancer.statemachine.IState
-import org.mechdancer.statemachine.StateMachine.Companion.ACCEPT
-import org.mechdancer.statemachine.WatchDog
-import org.mechdancer.statemachine.dsl.delay
-import org.mechdancer.statemachine.dsl.state
-import org.mechdancer.statemachine.machine
+import org.mechdancer.statemachine.core.IState
+import org.mechdancer.statemachine.core.WatchingDog
+import org.mechdancer.statemachine.core.StateMachine.Companion.ACCEPT
+import org.mechdancer.statemachine.builder.delay
+import org.mechdancer.statemachine.builder.state
 import org.mechdancer.statemachine.run
+import org.mechdancer.statemachine.stateMachine
 import java.util.concurrent.TimeUnit.SECONDS
 
 fun main(args: Array<String>) {
-	val `for` = machine<IState> {
+	val `for` = stateMachine<IState> {
 		var i = 0
 
 		val init = state {
-			val dog = WatchDog(this@machine, null, null, 5, SECONDS)
+			val dog = WatchingDog(this@stateMachine, null, null, 5, SECONDS)
 			before = { dog.start(); ACCEPT }
 			doing = { i = 0 }
 		}

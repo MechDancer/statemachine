@@ -1,4 +1,4 @@
-package org.mechdancer.statemachine
+package org.mechdancer.statemachine.core
 
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -14,12 +14,12 @@ import java.util.concurrent.locks.ReentrantLock
  * @param time 狗叫延时
  * @param unit 时间单位
  */
-class WatchDog<T : IState>(
-	private val machine: StateMachine<T>,
-	private val source: T?,
-	private val target: T?,
-	private val time: Long,
-	private val unit: TimeUnit) {
+class WatchingDog<T : IState>(
+		private val machine: StateMachine<T>,
+		private val source: T?,
+		private val target: T?,
+		private val time: Long,
+		private val unit: TimeUnit) {
 
 	/**
 	 * 锁
@@ -32,14 +32,14 @@ class WatchDog<T : IState>(
 	 * @return 是否开始了新的任务
 	 */
 	fun start() =
-		lock.tryLock().also {
-			if (it)
-				scheduler.schedule({
-					if (source in setOf(null, machine.current))
-						machine goto target
-					lock.unlock()
-				}, time, unit)
-		}
+			lock.tryLock().also {
+				if (it)
+					scheduler.schedule({
+						if (source in setOf(null, machine.current))
+							machine goto target
+						lock.unlock()
+					}, time, unit)
+			}
 
 	private companion object {
 		/** 默认调度器 */

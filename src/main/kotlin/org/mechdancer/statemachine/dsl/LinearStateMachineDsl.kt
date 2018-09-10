@@ -1,8 +1,8 @@
 package org.mechdancer.statemachine.dsl
 
-import org.mechdancer.statemachine.IState
-import org.mechdancer.statemachine.StateMachine
-import org.mechdancer.statemachine.StateMachine.Companion.ACCEPT
+import org.mechdancer.statemachine.core.IState
+import org.mechdancer.statemachine.core.StateMachine
+import org.mechdancer.statemachine.core.StateMachine.Companion.ACCEPT
 import java.util.concurrent.atomic.AtomicInteger
 
 /** 线性状态机缓存 */
@@ -11,7 +11,7 @@ class LinearStateMachineDsl {
 	private var _last: LinearState? = null
 
 	private fun LinearState.add() = also {
-		if (_machine == null) _machine = StateMachine(it)
+		if (_machine == null) _machine = StateMachine.create(it)
 		if (_last != null) _machine?.register(_last!! to it)
 		_last = it
 	}
