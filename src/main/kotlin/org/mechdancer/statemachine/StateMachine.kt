@@ -5,7 +5,7 @@ package org.mechdancer.statemachine
  * @param T 状态类型。不是强制的，但为了安全环保，建议定义一个枚举。
  * @param origin 初始状态
  */
-class StateMachine<T : IState>(private val origin: T) {
+class StateMachine<T : IState>(private var origin: T? = null) {
 	companion object {
 		const val ACCEPT = true  //接受：同意转移
 		const val REJECT = false //驳回：拒绝转移
@@ -79,7 +79,7 @@ class StateMachine<T : IState>(private val origin: T) {
 	 * @param target 目标状态
 	 * @return 是否发生转移
 	 */
-	infix fun jump(target: T?) =
+	infix fun goto(target: T?) =
 		{ target?.before() != REJECT } trans target
 
 	/**
@@ -87,4 +87,15 @@ class StateMachine<T : IState>(private val origin: T) {
 	 * 直接跳转到初始状态
 	 */
 	fun reset() = transfer(origin)
+
+	/**
+	 * 指定新源节点，并跳转到此节点
+	 * @return 指定是否成功
+	 */
+	fun startFrom(newOrigin: T) =
+		done.also {
+			if (!it) return@also
+			origin = newOrigin
+			reset()
+		}
 }

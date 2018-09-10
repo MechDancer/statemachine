@@ -36,7 +36,7 @@ class WatchDog<T : IState>(
 			if (it)
 				scheduler.schedule({
 					if (source in setOf(null, machine.current))
-						machine jump target
+						machine goto target
 					lock.unlock()
 				}, time, unit)
 		}

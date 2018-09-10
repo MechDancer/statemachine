@@ -7,3 +7,7 @@ typealias Event = () -> Boolean
 fun <T : IState> StateMachine<T>.run() {
 	while (!done) execute()
 }
+
+/** 构造基础版本状态机 */
+fun <T : IState> machine(block: StateMachine<T>.() -> Unit) =
+	StateMachine<T>().apply(block)
