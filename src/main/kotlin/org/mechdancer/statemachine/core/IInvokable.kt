@@ -13,12 +13,6 @@ interface IInvokable<T : IState>
 	val isCompleted: Boolean
 
 	/**
-	 * 指定新源节点，并跳转到此节点
-	 * @return 指定是否成功
-	 */
-	fun startFrom(newOrigin: T): Boolean
-
-	/**
 	 * 重置
 	 * 直接跳转到初始状态
 	 * @return 跳转是否成功

@@ -1,6 +1,7 @@
 package org.mechdancer.statemachine.builder
 
 import org.mechdancer.statemachine.ACCEPT
+import org.mechdancer.statemachine.core.IInvokable
 import org.mechdancer.statemachine.core.IState
 import org.mechdancer.statemachine.core.StandardMachine
 import java.util.concurrent.atomic.AtomicInteger
@@ -43,8 +44,19 @@ class LinearStateMachineBuilderDsl {
 	/** 构造状态，无限循环 */
 	fun forever(block: () -> Unit) = call(Int.MAX_VALUE, block)
 
+	/** 延时 */
+	fun delay(block: DelayBuilderDsl.() -> Unit) =
+		object : LinearState(Int.MAX_VALUE) {
+			val limit = DelayBuilderDsl().apply(block).nano
+			var start = 0L
+			override val loop = true
+			override fun doing() = Unit
+			override fun before() = run { start = System.nanoTime(); ACCEPT }
+			override fun after() = run { (System.nanoTime() - start) > limit }
+		}.add()
+
 	/** 获取时添加末状态以便退出 */
-	fun build(): StandardMachine<LinearState> {
+	fun build(): IInvokable<LinearState> {
 		object : LinearState(0) {
 			override val loop = false
 			override fun before() = true

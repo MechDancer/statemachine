@@ -7,12 +7,13 @@ import org.mechdancer.statemachine.then
 
 /**
  * 标准状态机
- * 状态机的一种正确实现，事件驱动，可自动执行，可迁移状态
+ * 状态机的一种正确实现，事件驱动，可自动执行，可外部迁移状态，可做其他状态机的子状态
  * @param T 状态类型。不是强制的，但为了安全环保，建议定义一个枚举
  * @param origin 初始状态
  */
 class StandardMachine<T : IState>(origin: T? = null)
 	: IEventDrivenInvokable<T>,
+	ISeniorInvokable<T>,
 	IExternalTransferable<T>,
 	IState {
 	//状态转移互斥锁
@@ -70,6 +71,10 @@ class StandardMachine<T : IState>(origin: T? = null)
 			origin = newOrigin
 			reset()
 		}
+
+	override fun stop() {
+		goto(null)
+	}
 
 	override val loop = false
 	override fun before() = !isCompleted
