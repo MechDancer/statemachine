@@ -1,20 +1,20 @@
-package org.mechdancer.statemachine.core.impl
+package org.mechdancer.statemachine.core
 
 import org.mechdancer.statemachine.Event
-import org.mechdancer.statemachine.core.IState
-import org.mechdancer.statemachine.core.StateMachine
-import org.mechdancer.statemachine.core.StateMachine.Companion.REJECT
+import org.mechdancer.statemachine.REJECT
 import org.mechdancer.statemachine.otherwise
 import org.mechdancer.statemachine.then
 
 /**
- * 状态机
- * @param T 状态类型。不是强制的，但为了安全环保，建议定义一个枚举。
+ * 标准状态机
+ * 状态机的一种正确实现，事件驱动，可自动执行，可迁移状态
+ * @param T 状态类型。不是强制的，但为了安全环保，建议定义一个枚举
  * @param origin 初始状态
  */
-class StateMachineImpl<T : IState>
-internal constructor(private var origin: T?)
-	: StateMachine<T> {
+class StandardMachine<T : IState>(origin: T? = null)
+	: IEventDrivenInvokable<T>,
+	IExternalTransferable<T>,
+	IState {
 	//状态转移互斥锁
 	private val lock = Any()
 
@@ -28,8 +28,11 @@ internal constructor(private var origin: T?)
 	override var current: T? = origin
 		private set
 
-	override val isCompleted: Boolean
+	override val isCompleted
 		get() = current === null
+
+	override var origin: T? = origin
+		private set
 
 	override fun event(pair: Pair<T, T>) =
 		{ { current === pair.first && pair.first.after() && pair.second.before() } trans pair.second }
@@ -67,4 +70,11 @@ internal constructor(private var origin: T?)
 			origin = newOrigin
 			reset()
 		}
+
+	override val loop = false
+	override fun before() = !isCompleted
+	override fun after() = isCompleted
+	override fun doing() {
+		invoke()
+	}
 }

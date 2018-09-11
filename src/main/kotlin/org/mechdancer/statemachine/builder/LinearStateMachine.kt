@@ -1,13 +1,13 @@
 package org.mechdancer.statemachine.builder
 
+import org.mechdancer.statemachine.ACCEPT
 import org.mechdancer.statemachine.core.IState
-import org.mechdancer.statemachine.core.StateMachine
-import org.mechdancer.statemachine.core.StateMachine.Companion.ACCEPT
+import org.mechdancer.statemachine.core.StandardMachine
 import java.util.concurrent.atomic.AtomicInteger
 
 /** 线性状态机缓存 */
 class LinearStateMachineBuilderDsl {
-	private var machine = StateMachine.create<LinearState>()
+	private var machine = StandardMachine<LinearState>()
 	private var last: LinearState? = null
 	private fun LinearState.add() = also {
 		machine.startFrom(it)
@@ -44,7 +44,7 @@ class LinearStateMachineBuilderDsl {
 	fun forever(block: () -> Unit) = call(Int.MAX_VALUE, block)
 
 	/** 获取时添加末状态以便退出 */
-	fun build(): StateMachine<LinearState> {
+	fun build(): StandardMachine<LinearState> {
 		object : LinearState(0) {
 			override val loop = false
 			override fun before() = true
