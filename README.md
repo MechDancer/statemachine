@@ -138,6 +138,44 @@ dependencies {
 
    基于定义，此模型也支持无限状态状态机，甚至在运行间动态添加新的状态和事件。
 
+### 构造线性状态机
+
+所谓线性状态机指的是状态有顺序并基于执行次数或外部条件按顺序调度的一类状态机。其本质与其他可执行后可自动跳转的状态机并无不同，因此库只需提供一个方便的构建器即可。
+
+当前提供的 DSL 构建器：
+
+```kotlin
+val `for` = linearStateMachine {
+		var i = 0
+		once { i = 0 }
+		call(20) { println(++i) }
+		delay { time = 1; unit = SECONDS }
+		once { println("hello world!") }
+	}
+```
+
+`once` 指定的代码块将执行 1 次。可以通过 `call` 设置代码块的执行次数。还可以通过 `forever` 设置代码块无限循环（可以通过看门狗退出）。`delay` 用于在两个状态之间制造间隔。
+
+状态指定的顺序就是状态执行的顺序。`reset` 可要求状态机回到初始状态，初始状态是无法修改的。
+
+### 使用看门狗
+
+有时状态执行较慢，或者状态的离开条件因为某些原因迟迟无法满足，我们希望状态机在最终无望转移时仍能继续执行下去，此时可以使用看门狗。构造看门狗时需要指定看门狗作用的状态机、其起始状态、目标状态和等待的时间。当调用看门狗的 `start` 方法后，看门狗将启动。当等待时间消耗殆尽，状态机会启动一次检查，如果当前状态是指定的起始状态，环境有满足目标状态的进入条件，就不再检查起始状态的离开条件，直接驱动一次跳转。
+
+由于其强制跳转操作依赖于状态机的支持，看门狗作用的状态机必须实现 `IExternalTransferable<T>`。
+
+示例代码：
+
+```kotlin
+val init = state {
+			val dog = Watchdog(this@stateMachine, null, null, 5, SECONDS)
+			before = { dog.start(); ACCEPT }
+			doing = { i = 0 }
+		}
+```
+
+此状态机将在 `init` 状态初次执行 5s 后直接结束。
+
 ## 示例
 
 完整示例代码可以在 [这里](https://github.com/MechDancer/statemachine/blob/dev/src/test/kotlin/org/mechdancer/statemachine/test/StateTest.kt) 找到。
