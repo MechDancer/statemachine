@@ -1,7 +1,7 @@
 package org.mechdancer.statemachine.builder
 
 import org.mechdancer.statemachine.ACCEPT
-import org.mechdancer.statemachine.core.IInvokable
+import org.mechdancer.statemachine.core.IExternalAutoTransferable
 import org.mechdancer.statemachine.core.IState
 import org.mechdancer.statemachine.core.StandardMachine
 import java.util.concurrent.atomic.AtomicInteger
@@ -56,7 +56,7 @@ class LinearStateMachineBuilderDsl {
 		}.add()
 
 	/** 获取时添加末状态以便退出 */
-	fun build(): IInvokable<LinearState> {
+	fun build(): IExternalAutoTransferable<LinearState> {
 		object : LinearState(0) {
 			override val loop = false
 			override fun before() = true

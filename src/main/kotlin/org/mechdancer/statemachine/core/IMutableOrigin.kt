@@ -3,7 +3,7 @@ package org.mechdancer.statemachine.core
 /**
  * 可从外部修改源节点或跳转到无状态
  */
-interface ISeniorInvokable<T : IState>
+interface IMutableOrigin<T : IState>
 	: IInvokable<T> {
 	/**
 	 * 指定新源节点，并跳转到此节点
