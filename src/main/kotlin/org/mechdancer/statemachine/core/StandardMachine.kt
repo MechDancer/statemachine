@@ -29,6 +29,10 @@ class StandardMachine<T : IState>(origin: T? = null)
 	private fun check(pair: Pair<T?, T?>) =
 		pair.first?.after() != REJECT && pair.second?.before() != REJECT
 
+	//从目标列表选择一个可转移的目标
+	private fun select(last: T) =
+		targets[last]?.firstOrNull { check(last to it) } ?: last.takeIf { last.loop }
+
 	// 目标状态表
 	private val targets = mutableMapOf<T, MutableSet<T>>()
 
@@ -57,10 +61,7 @@ class StandardMachine<T : IState>(origin: T? = null)
 	override operator fun invoke() {
 		current?.let { last ->
 			last.doing();
-			{ current === last } thenTransfer
-				(targets[last]
-					?.firstOrNull { check(last to it) }
-					?: last.takeIf { last.loop })
+			{ current === last } thenTransfer select(last)
 		}
 	}
 
@@ -84,16 +85,13 @@ class StandardMachine<T : IState>(origin: T? = null)
 
 	override fun transferNow() =
 		current?.let { last ->
-			current = targets[last]
-				?.firstOrNull { check(current to it) }
-				?: last.takeIf { last.loop }
+			current = select(last)
 			true
 		} ?: false
 
 	override fun gotoNext() =
 		current?.let { last ->
-			current = targets[last]
-				?.firstOrNull { check(null to it) }
+			current = targets[last]?.firstOrNull { check(null to it) }
 			true
 		} ?: false
 
