@@ -2,7 +2,7 @@ package org.mechdancer.statemachine.builder
 
 import org.mechdancer.statemachine.core.IState
 
-/** DSL缓存 */
+/** dsl 建造者 */
 data class StateBuilderDsl(
 	var before: () -> Boolean = { true },
 	var doing: () -> Unit = {},
@@ -10,7 +10,7 @@ data class StateBuilderDsl(
 	var loop: Boolean = false
 )
 
-/** dsl构造状态 */
+/** dsl 构造状态 */
 fun state(block: StateBuilderDsl.() -> Unit) =
 	StateBuilderDsl().apply(block).let {
 		object : IState {

@@ -11,49 +11,7 @@
 
 在此也要感谢 .Net 下状态机库 [Stateless](http://www.hanselman.com/blog/Stateless30AStateMachineLibraryForNETCore.aspx) 带来的启发，希望这个简单的实现，能使有趣的状态机模式在机器人行为控制中得到发展。
 
-*（ 2018 年 9 月 9 日 ）*
-
-## 开始使用
-
-* Gradle
-* Maven
-* Bintray
-
-您需要将其添加至  [仓库和依赖](https://docs.gradle.org/current/userguide/declaring_dependencies.html) 中。
-
-### Gradle
-
-```groovy
-repositories {
-    jcenter()
-}
-dependencies {
-    compile 'org.mechdancer:statemachine:0.1.0'
-}
-```
-
-### Maven
-
-```xml
-<repositories>
-   <repository>
-     <id>jcenter</id>
-     <name>JCenter</name>
-     <url>https://jcenter.bintray.com/</url>
-   </repository>
-</repositories>
-
-<dependency>
-  <groupId>org.mechdancer</groupId>
-  <artifactId>statemachine</artifactId>
-  <version>0.1.0</version>
-  <type>pom</type>
-</dependency>
-```
-
-### Bintray
-
-您总可以从 bintray 直接下载 jar：[![Download](https://api.bintray.com/packages/mechdancer/maven/statemachine/images/download.svg) ](https://bintray.com/mechdancer/maven/statemachine/_latestVersion)
+*（2018 年 9 月 9 日）*
 
 ## 使用说明
 
@@ -179,3 +137,45 @@ val init = state {
 ## 示例
 
 完整示例代码可以在 [这里](https://github.com/MechDancer/statemachine/blob/dev/src/test/kotlin/org/mechdancer/statemachine/test/StateTest.kt) 找到。
+
+## 开始使用
+
+* Gradle
+* Maven
+* Bintray
+
+您需要将其添加至  [仓库和依赖](https://docs.gradle.org/current/userguide/declaring_dependencies.html) 中。
+
+### Gradle
+
+```groovy
+repositories {
+    jcenter()
+}
+dependencies {
+    compile 'org.mechdancer:statemachine:0.1.1'
+}
+```
+
+### Maven
+
+```xml
+<repositories>
+   <repository>
+     <id>jcenter</id>
+     <name>JCenter</name>
+     <url>https://jcenter.bintray.com/</url>
+   </repository>
+</repositories>
+
+<dependency>
+  <groupId>org.mechdancer</groupId>
+  <artifactId>statemachine</artifactId>
+  <version>0.1.1</version>
+  <type>pom</type>
+</dependency>
+```
+
+### Bintray
+
+您总可以从 bintray 直接下载 jar：[![Download](https://api.bintray.com/packages/mechdancer/maven/statemachine/images/download.svg) ](https://bintray.com/mechdancer/maven/statemachine/_latestVersion)

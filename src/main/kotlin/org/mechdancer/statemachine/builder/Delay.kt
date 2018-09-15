@@ -12,7 +12,7 @@ data class DelayBuilderDsl(
 	val nano get() = unit.toNanos(time)
 }
 
-/** dsl构造延时状态 */
+/** dsl 构造延时状态 */
 fun delay(block: DelayBuilderDsl.() -> Unit) =
 		state {
 			var start = 0L
