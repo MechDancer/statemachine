@@ -30,6 +30,7 @@ deploy:
     api_key:      $GitHubToken
     on:
       tags:       true
+      branch:     dev
 
 notifications:
   webhooks: https://oapi.dingtalk.com/robot/send?access_token=4b59c5ece57fc88af8fda28cc07573c4caf525aa69afc0cc888ccf3ce6dbe41b
