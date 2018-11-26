@@ -17,7 +17,7 @@ apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'com.novoda.bintray-release'
 
 group 'org.mechdancer'
-version '0.1.1'
+version '0.1.2'
 
 repositories {
     mavenCentral()
@@ -45,7 +45,7 @@ publish {
     userOrg = 'mechdancer'
     groupId = 'org.mechdancer'
     artifactId = 'statemachine'
-    publishVersion = '0.1.1'
+    publishVersion = version.toString()
     desc = 'statemachine kotlin framework'
     website = 'https://github.com/MechDancer/statemachine'
 }
