@@ -7,11 +7,11 @@ import org.mechdancer.statemachine.Event
  * 可以构造事件
  */
 interface IEventDrivenMachine<T : IState>
-	: IStateMachine<T> {
-	/**
-	 * 构造事件
-	 * @param pair 事件对
-	 * @return 转移事件
-	 */
-	fun event(pair: Pair<T, T>): Event
+    : IStateMachine<T> {
+    /**
+     * 构造事件
+     * @param pair 事件对
+     * @return 转移事件
+     */
+    fun event(pair: Pair<T, T>): Event
 }

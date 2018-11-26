@@ -12,9 +12,9 @@ typealias Event = () -> Boolean
 
 /** 阻塞并执行状态机，直到结束 */
 fun IInvokable<*>.run() {
-	while (!isCompleted) this()
+    while (!isCompleted) this()
 }
 
 /** 构造基础版本状态机 */
 fun <T : IState> stateMachine(block: StandardMachine<T>.() -> Unit) =
-	StandardMachine<T>().apply(block)
+    StandardMachine<T>().apply(block)

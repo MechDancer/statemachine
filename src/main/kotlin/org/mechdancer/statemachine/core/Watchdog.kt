@@ -15,28 +15,28 @@ import java.util.concurrent.locks.ReentrantLock
  * @param unit 时间单位
  */
 class Watchdog<T : IState>(
-	private val machine: IExternalTransferable<T>,
-	private val source: T?,
-	private val target: T?,
-	private val time: Long,
-	private val unit: TimeUnit) {
+    private val machine: IExternalTransferable<T>,
+    private val source: T?,
+    private val target: T?,
+    private val time: Long,
+    private val unit: TimeUnit) {
 
-	//一条狗只能注册一次叫
-	private val lock = ReentrantLock()
+    //一条狗只能注册一次叫
+    private val lock = ReentrantLock()
 
-	/** 命令狗准备叫 */
-	fun start() =
-		lock.tryLock().also {
-			if (it)
-				scheduler.schedule({
-					if (source in setOf(null, machine.current))
-						machine goto target
-					lock.unlock()
-				}, time, unit)
-		}
+    /** 命令狗准备叫 */
+    fun start() =
+        lock.tryLock().also {
+            if (it)
+                scheduler.schedule({
+                    if (source in setOf(null, machine.current))
+                        machine goto target
+                    lock.unlock()
+                }, time, unit)
+        }
 
-	private companion object {
-		/** 默认调度器 */
-		val scheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(0)
-	}
+    private companion object {
+        /** 默认调度器 */
+        val scheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(0)
+    }
 }
