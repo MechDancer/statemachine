@@ -5,9 +5,9 @@ package org.mechdancer.statemachine.common
  * @param T 内部状态类型
  */
 data class StateMachine<T>(
-	val current: State<T, *>,
-	val state: T
+    val current: State<T, *>,
+    val state: T
 ) {
-	operator fun invoke() =
-		current(state).let { StateMachine(current, it.first) to it.second }
+    operator fun invoke() =
+        current(state).let { StateMachine(current, it.first) to it.second }
 }

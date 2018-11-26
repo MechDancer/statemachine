@@ -12,34 +12,34 @@ import java.util.concurrent.TimeUnit
 class WatchDogEngine(limit: Long,
                      timeUnit: TimeUnit,
                      origin: IStateHandler)
-	: IEngine {
+    : IEngine {
 
 
-	private var current = origin
-	private var firstInvoke: Long = -1
+    private var current = origin
+    private var firstInvoke: Long = -1
 
-	private val limit = TimeUnit.NANOSECONDS.convert(limit, timeUnit)
+    private val limit = TimeUnit.NANOSECONDS.convert(limit, timeUnit)
 
-	/**
-	 * 执行一个状态并向后跳转，超时或结束后返回done
-	 */
-	override fun run(): Boolean = run {
-		if (firstInvoke == -1L)
-			firstInvoke = System.nanoTime()
+    /**
+     * 执行一个状态并向后跳转，超时或结束后返回done
+     */
+    override fun run(): Boolean = run {
+        if (firstInvoke == -1L)
+            firstInvoke = System.nanoTime()
 
-		current is Ending ||
-				run {
-					current = if (timeOut) Ending.TimeOut else current.run()
-					current is Ending
-				}
-	}
+        current is Ending ||
+            run {
+                current = if (timeOut) Ending.TimeOut else current.run()
+                current is Ending
+            }
+    }
 
-	/**
-	 * 超时标记
-	 */
-	val timeOut
-		get() = (System.nanoTime() - firstInvoke) > limit
+    /**
+     * 超时标记
+     */
+    val timeOut
+        get() = (System.nanoTime() - firstInvoke) > limit
 }
 
 fun delayMachine(limit: Long, timeUnit: TimeUnit) =
-		WatchDogEngine(limit, timeUnit, IStateHandler.Nothing)
+    WatchDogEngine(limit, timeUnit, IStateHandler.Nothing)

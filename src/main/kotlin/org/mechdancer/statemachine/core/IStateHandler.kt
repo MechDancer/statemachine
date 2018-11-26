@@ -5,9 +5,9 @@ package org.mechdancer.statemachine.core
  * 执行后指定下一跳
  */
 interface IStateHandler {
-	fun run(): IStateHandler
+    fun run(): IStateHandler
 
-	object Nothing : IStateHandler {
-		override fun run() = this
-	}
+    object Nothing : IStateHandler {
+        override fun run() = this
+    }
 }

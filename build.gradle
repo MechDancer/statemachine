@@ -50,7 +50,7 @@ publish {
     website = 'https://github.com/MechDancer/statemachine'
 }
 
-dokka{
+dokka {
     outputFormat = 'html'
-    outputDirectory = "$buildDir/javadoc"
+    outputDirectory = "${rootProject.buildDir.toString()}/javadoc"
 }

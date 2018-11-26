@@ -5,5 +5,5 @@ typealias State<TState, TReturn> = (TState) -> Pair<TState, TReturn>
 
 //状态机常常有个“出口”，或者说停机状态
 class Final<TState> : State<TState, Unit> {
-	override fun invoke(it: TState) = it to Unit
+    override fun invoke(it: TState) = it to Unit
 }

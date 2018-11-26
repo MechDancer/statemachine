@@ -9,36 +9,36 @@ package org.mechdancer.statemachine.legacy.blockers
  */
 abstract class StateBlocker(val name: String) {
 
-	//阻塞器状态，由状态机获取
-	internal var isBlocking: Boolean = false
-		private set
+    //阻塞器状态，由状态机获取
+    internal var isBlocking: Boolean = false
+        private set
 
-	//由子类表示任务是否完成，即是否应阻塞
-	protected var finished: Boolean = false
+    //由子类表示任务是否完成，即是否应阻塞
+    protected var finished: Boolean = false
 
-	//阻塞器是否启用
-	private var isRunning: Boolean = false
+    //阻塞器是否启用
+    private var isRunning: Boolean = false
 
-	internal fun refresh() {
-		sync()
-		isBlocking = if (isRunning)
-			!finished
-		else false
-	}
+    internal fun refresh() {
+        sync()
+        isBlocking = if (isRunning)
+            !finished
+        else false
+    }
 
-	protected abstract fun sync()
+    protected abstract fun sync()
 
-	protected fun reset() {
-		isBlocking = false
-		isRunning = false
-		finished = false
-	}
+    protected fun reset() {
+        isBlocking = false
+        isRunning = false
+        finished = false
+    }
 
-	fun enable() {
-		isRunning = true
-	}
+    fun enable() {
+        isRunning = true
+    }
 
-	fun disable() {
-		isRunning = false
-	}
+    fun disable() {
+        isRunning = false
+    }
 }

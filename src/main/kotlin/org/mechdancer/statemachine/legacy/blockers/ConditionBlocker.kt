@@ -8,18 +8,18 @@ package org.mechdancer.statemachine.legacy.blockers
 open class ConditionBlocker(private var boolean: Boolean,
                             name: String = "ConditionBlocker") : StateBlocker(name) {
 
-	companion object : ConditionBlocker(true, "CommonConditionBlocker")
+    companion object : ConditionBlocker(true, "CommonConditionBlocker")
 
-	override fun sync() {
-		finished = boolean
-	}
+    override fun sync() {
+        finished = boolean
+    }
 
-	/**
-	 * 重置条件
-	 * @param condition 条件
-	 */
-	fun reset(condition: Boolean) {
-		boolean = condition
-		reset()
-	}
+    /**
+     * 重置条件
+     * @param condition 条件
+     */
+    fun reset(condition: Boolean) {
+        boolean = condition
+        reset()
+    }
 }
