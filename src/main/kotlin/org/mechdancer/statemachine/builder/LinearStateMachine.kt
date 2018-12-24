@@ -20,35 +20,34 @@ class LinearStateMachineBuilderDsl {
      * 构造状态，循环 time 次
      * 第一个构造的状态视作初始状态
      */
-    fun call(times: Int, block: LinearStateBuilderDsl.() -> Unit) =
-        LinearStateBuilderDsl()
-            .apply(block)
-            .let {
-                object : LinearState(times) {
-                    override val loop = true
+    fun call(times: Int, until: (Int) -> Boolean = { true }, block: () -> Unit) =
+        addState(times, LinearStateBuilderDsl(block, until))
 
-                    override fun before(): Boolean {
-                        ttl.set(times)
-                        return ACCEPT
-                    }
+    private fun addState(times: Int, builder: LinearStateBuilderDsl) =
+        (object : LinearState(times) {
+            override val loop = true
 
-                    override fun doing() {
-                        ttl.decrementAndGet()
-                        it.todo()
-                    }
+            override fun before(): Boolean {
+                ttl.set(times)
+                return ACCEPT
+            }
 
-                    override fun after() =
-                        ttl.get().let { rest -> rest <= 0 || it.until(times - rest) }
-                }
-            }.add()
+            override fun doing() {
+                ttl.decrementAndGet()
+                builder.todo()
+            }
+
+            override fun after() =
+                ttl.get().let { rest -> rest <= 0 || builder.until(times - rest) }
+        }).add()
 
     /** 构造状态，只循环 1 次 */
-    fun once(block: LinearStateBuilderDsl.() -> Unit) =
-        call(1, block)
+    fun once(until: (Int) -> Boolean = { true }, block: () -> Unit) =
+        call(1, until, block)
 
     /** 构造状态，无限循环 */
-    fun forever(block: LinearStateBuilderDsl.() -> Unit) =
-        call(Int.MAX_VALUE, block)
+    fun forever(until: (Int) -> Boolean = { true }, block: () -> Unit) =
+        call(Int.MAX_VALUE, until, block)
 
     /** 延时 */
     fun delay(block: DelayBuilderDsl.() -> Unit) =
@@ -80,7 +79,6 @@ class LinearStateMachineBuilderDsl {
 
     /** 用于线性状态机的状态配置 */
     data class LinearStateBuilderDsl(
-        /** 要执行的操作 */
         var todo: () -> Unit = {},
 
         /** 跳出条件 := 执行次数 -> 能否跳出 */
