@@ -4,6 +4,7 @@ import org.mechdancer.statemachine.ACCEPT
 import org.mechdancer.statemachine.core.IExternalAutoTransferable
 import org.mechdancer.statemachine.core.IState
 import org.mechdancer.statemachine.core.StandardMachine
+import org.mechdancer.statemachine.then
 import java.util.concurrent.atomic.AtomicInteger
 
 /** 线性状态机缓存 */
@@ -52,12 +53,20 @@ class LinearStateMachineBuilderDsl {
     /** 延时 */
     fun delay(block: DelayBuilderDsl.() -> Unit) =
         object : LinearState(Int.MAX_VALUE) {
-            val limit = DelayBuilderDsl().apply(block).nano
+            val delay = DelayBuilderDsl().apply(block).nano
             var start = 0L
+            var busy = false
+
             override val loop = true
-            override fun doing() = Unit
-            override fun before() = run { start = System.nanoTime(); ACCEPT }
-            override fun after() = run { (System.nanoTime() - start) > limit }
+            override fun doing() {
+                if (!busy) {
+                    start = System.nanoTime()
+                    busy = true
+                }
+            }
+
+            override fun before() = ACCEPT
+            override fun after() = ((System.nanoTime() - start) > delay).then { busy = false }
         }.add()
 
     /** 获取时添加末状态以便退出 */

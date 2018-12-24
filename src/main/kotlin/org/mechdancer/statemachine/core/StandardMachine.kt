@@ -11,12 +11,11 @@ import org.mechdancer.statemachine.then
  * @param T 状态类型。不是强制的，但为了安全环保，建议定义一个枚举
  * @param origin 初始状态
  */
-class StandardMachine<T : IState>(origin: T? = null)
-    : IEventDrivenInvokable<T>,
-      IMutableOrigin<T>,
-      IExternalTransferable<T>,
-      IExternalAutoTransferable<T>,
-      IState {
+class StandardMachine<T : IState>(origin: T? = null) : IEventDrivenInvokable<T>,
+                                                       IMutableOrigin<T>,
+                                                       IExternalTransferable<T>,
+                                                       IExternalAutoTransferable<T>,
+                                                       IState {
 
     //状态转移互斥锁
     private val lock = Any()
@@ -46,8 +45,7 @@ class StandardMachine<T : IState>(origin: T? = null)
     override var current: T? = origin
         private set
 
-    override val isCompleted
-        get() = current === null
+    override fun isIdle() = current === null
 
     override fun event(pair: Pair<T, T>) =
         { { current === pair.first && check(pair) } thenJump pair.second }
@@ -78,7 +76,7 @@ class StandardMachine<T : IState>(origin: T? = null)
     override fun reset() = transfer(origin)
 
     override fun startFrom(newOrigin: T) =
-        isCompleted.then {
+        isIdle().then {
             origin = newOrigin
             jump(origin)
         }
@@ -95,7 +93,7 @@ class StandardMachine<T : IState>(origin: T? = null)
         } ?: false
 
     override val loop = false
-    override fun before() = !isCompleted
-    override fun after() = isCompleted
+    override fun before() = !isIdle()
+    override fun after() = isIdle()
     override fun doing() = invoke()
 }

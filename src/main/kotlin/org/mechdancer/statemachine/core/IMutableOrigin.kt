@@ -1,7 +1,7 @@
 package org.mechdancer.statemachine.core
 
 /**
- * 可从外部修改源节点或跳转到无状态
+ * 可从外部修改源节点或跳转到空闲状态
  */
 interface IMutableOrigin<T : IState>
     : IInvokable<T> {
@@ -11,6 +11,6 @@ interface IMutableOrigin<T : IState>
      */
     fun startFrom(newOrigin: T): Boolean
 
-    /** 跳转到无状态 */
+    /** 跳转到空闲状态 */
     fun stop()
 }

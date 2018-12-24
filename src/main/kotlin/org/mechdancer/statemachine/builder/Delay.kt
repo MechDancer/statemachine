@@ -1,6 +1,7 @@
 package org.mechdancer.statemachine.builder
 
 import org.mechdancer.statemachine.ACCEPT
+import org.mechdancer.statemachine.then
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
@@ -15,9 +16,18 @@ data class DelayBuilderDsl(
 /** dsl 构造延时状态 */
 fun delay(block: DelayBuilderDsl.() -> Unit) =
     state {
+        val delay = DelayBuilderDsl().apply(block).nano
         var start = 0L
+        var busy = false
+
         loop = true
-        before = { start = System.nanoTime(); ACCEPT }
-        after = DelayBuilderDsl().apply(block).nano
-            .let { { (System.nanoTime() - start) > it } }
+        doing = {
+            if (!busy) {
+                start = System.nanoTime()
+                busy = true
+            }
+        }
+
+        before = { ACCEPT }
+        after = { ((System.nanoTime() - start) > delay).then { busy = false } }
     }

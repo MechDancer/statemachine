@@ -17,7 +17,7 @@ class DelayTest {
         }
 
         println(measureNanoTime {
-            while (!stateMachine.isCompleted)
+            while (!stateMachine.isIdle)
                 stateMachine()
         } / 1E9)
     }

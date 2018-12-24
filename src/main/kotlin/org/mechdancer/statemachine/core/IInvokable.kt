@@ -10,7 +10,7 @@ interface IInvokable<T : IState>
     val origin: T?
 
     /** 是否执行完毕 */
-    val isCompleted: Boolean
+    fun isIdle(): Boolean
 
     /**
      * 重置
