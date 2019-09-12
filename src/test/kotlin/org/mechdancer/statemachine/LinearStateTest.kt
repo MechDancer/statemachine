@@ -17,8 +17,8 @@ class LinearStateTest {
                 println(++i)
             }
             forever({
-                i % 99 == 12
-            }) {
+                        i % 99 == 12
+                    }) {
                 println(++i)
             }
             delay {

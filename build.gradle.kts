@@ -15,7 +15,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.3.11"
+    kotlin("jvm") version "1.3.50"
     id("org.jetbrains.dokka") version "0.9.16"
 }
 
@@ -53,12 +53,12 @@ configure<PublishExtension> {
 }
 
 task<Jar>("sourceJar") {
-    classifier = "sources"
+    archiveClassifier.set("sources")
     from(sourceSets["main"].allSource)
 }
 
 task<Jar>("javadocJar") {
-    classifier = "javadoc"
+    archiveClassifier.set("javadoc")
     from("$buildDir/javadoc")
 }
 
